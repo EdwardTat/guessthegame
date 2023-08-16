@@ -1,0 +1,72 @@
+[[extend 'layout.html']]
+
+<style>
+[v-cloak] {
+     display: none;
+}
+
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+
+<div class="section" id="vue-target" v-cloak>
+  <button v-if="checkGameData"class="button is-info is-pulled-right" style="margin-right: 20%; margin-top: 10px" @click="openPopup()">
+    <span class="icon is-large">
+      <i class="fas fa-chart-bar"></i>
+    </span>
+    <span>Player Stats</span>
+  </button>
+  <nav class="level">
+    <p class="level-item has-text-centered">
+      <a class="has-text-danger is-size-2"> Quizio </a>
+      <!-- <img src="images/question_mark.png" style="height: 30px;" -->
+    </p>
+  </nav>
+
+  <div class="container">
+
+    <table class="table is-fullwidth is-striped">
+      <thead>
+        <th>category</th>
+        <th># puzzle</th>
+        <th>play</th>
+      </thead>
+      <tbody>
+        <tr v-for="cat in list_categories" :key="cat.categoryName">
+          <td> {{cat.categoryName}} </td>
+          <td has-text-centered> {{cat.numPuzzles}} </td>
+          <td> 
+            <!-- <a class="button is-danger" v-bind:href="'quizio/quizzes/' + cat.categoryName"> -->
+            <a class="button is-danger" @click="quiz_selection(cat.categoryName)">
+              <span class="icon">
+                <i class="fa fa-play"></i>
+              </span>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <a class="button" href="[[=URL('add_category')]]">
+      Add Category
+    </a>
+  </div>
+  
+
+</div>
+
+
+
+
+
+
+[[block page_scripts]]
+<script>
+  let get_categories_url = "[[=XML(get_categories_url)]]";
+  let add_category_url = "[[=XML(add_category_url)]]";
+  let get_player_stat_info_url = "[[=XML(get_player_stat_info_url)]]";
+</script>
+<script src="js/index.js"></script>
+[[end]]

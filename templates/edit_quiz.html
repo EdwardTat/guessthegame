@@ -1,0 +1,24 @@
+[[extend 'layout.html']]
+
+<div class="section">
+    <h1 class="title"> Add a game </h1>
+    [[=form]]
+</div>
+
+[[block page_scripts]]
+<script>
+    var initialData = {
+        quizName: "[[=quizName]]",
+        answer:"[[=answer]]",
+        image1:"[[=image1]]",
+        image2:"[[=image2]]",
+        image3:"[[=image3]]",
+        image4:'[[=image4]]',
+        image5:"[[=image5]]",
+        image6:"[[=image6]]"
+    };
+    let get_quizzes_url = "[[=XML(get_quizzes_url)]]";
+    let delete_quiz_url = "[[=XML(delete_quiz_url)]]";
+</script>
+<script src="js/edit_quiz.js"></script>
+[[end]]

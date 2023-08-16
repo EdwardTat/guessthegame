@@ -1,0 +1,88 @@
+[[extend 'layout.html']]
+
+<style>
+[v-cloak] {
+     display: none;
+}
+</style>
+<style>
+.progress-bar {
+  width: 45%;
+  background-color: #D2042D;
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress {
+  background-color: #4caf50;
+  height: 100%;
+  transition: width 0.3s ease-in-out;
+}
+
+.title {
+    font-family: "Arial", sans-serif;
+    font-size: 24px;
+    color: #333;
+}
+</style>
+
+
+<div class="section" id="vue-target" v-cloak>
+    <div class="container">
+
+        <h1 class = "title"> [[=categoryName]] </h1>
+        <table class="table is-fullwidth is-striped">
+          <thead>
+            <th> puzzle # </th>
+            <th> Options </th>
+            <th> play </th>
+            <th> like/dislike </th>
+          </thead>
+          <tbody>
+            <tr v-for="quiz in list_quizzes">
+              <td> {{quiz.gameName}} </td>
+              <td> <div v-if="quiz.ownerStatus == true">
+                <div class="button" @click="edit_quiz(quiz.id)">Edit Quiz</div>
+                <div style = "margin-left: 15px" class="button" @click="delete_quiz_entry(quiz.id)">Delete</div></td>
+              <td>             
+                <a class="button is-danger" @click="enter_quiz(quiz.id)">
+                  <span class="icon">
+                    <i class="fa fa-play"></i>
+                  </span>
+                </a> </td>
+              <td>
+                <div class="progress-bar">
+                  <div class="progress" 
+                  :style="{ width: quiz.upvotes/(quiz.downvotes + quiz.upvotes) * 100 + '%' }" 
+                  id="progress-bar"></div> 
+                </div>
+                <div style="margin-left: 5%"> 
+                  <a class="has-text-primary">Upvotes: {{quiz.upvotes}} </a>
+                  <a class="has-text-danger" style="margin-left: 20px"> Downvotes: {{quiz.downvotes}} </a>
+
+                  </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+        <a class="button"  @click="add_game()">
+          Add Game
+        </a>
+      </div>
+
+</div>
+
+
+
+[[block page_scripts]]
+<script>
+    var initialData = {
+        categoryName: "[[=categoryName]]",
+    };
+    let get_quizzes_url = "[[=XML(get_quizzes_url)]]";
+    let delete_quiz_url = "[[=XML(delete_quiz_url)]]";
+</script>
+<script src="js/quiz_selection.js"></script>
+[[end]]

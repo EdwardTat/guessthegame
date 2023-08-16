@@ -1,0 +1,182 @@
+[[extend 'layout.html']]
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+[v-cloak] {
+     display: none;
+}
+
+.image {
+     width: 300;
+     height: 100;
+}
+
+.game-over {
+      font-family: 'Arial', sans-serif;
+      font-size: 24px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+</style>
+
+<div class="container" id="vue-target" v-cloak>
+     <div class="button is-warning" style="margin-top: 15px; margin-left: 40px;" @click="redirect('')" >Quizzio Home</div>
+     <br>
+     <div class="button is-info" style="margin-top: 15px; margin-left: 40px;" @click="backToMenu()" >Back To Menu</div>
+     <center>
+        <img style="max-width: 550px; max-height: 550px;height: auto; width: auto;" :src="current_image"> </img>
+          <br>
+               <div v-if="tryNum>=1 || succeedStatus != 0" class = "button" :class="{'is-danger': tryNum > 1,
+                     'is-success': tryNum == 1,'is-medium': current_image_index == 1}" 
+                     @click="(setImageIndex(1))">1</div>
+               <div v-if="tryNum>=2 || succeedStatus != 0" class = "button" :class="{'is-danger': tryNum > 2,
+                     'is-success': tryNum == 2,'is-medium': current_image_index == 2}" 
+                     @click="(setImageIndex(2))">2</div>
+               <div v-if="tryNum>=3 || succeedStatus != 0" class = "button" :class="{'is-danger': tryNum > 3,
+                     'is-success': tryNum == 3,'is-medium': current_image_index == 3}" 
+                     @click="(setImageIndex(3))">3</div>
+               <div v-if="tryNum>=4 || succeedStatus != 0" class = "button" :class="{'is-danger': tryNum > 4,
+                     'is-success': tryNum == 4,'is-medium': current_image_index == 4}" 
+                     @click="(setImageIndex(4))">4</div>
+               <div v-if="tryNum>=5 || succeedStatus != 0" class = "button" :class="{'is-danger': tryNum > 5,
+                     'is-success': tryNum == 5,'is-medium': current_image_index == 5}" 
+                     @click="(setImageIndex(5))">5</div>
+               <div v-if="tryNum>=6 || succeedStatus != 0" class = "button" :class="{'is-danger': tryNum > 6,
+                     'is-success': tryNum == 6,'is-medium': current_image_index == 6}"
+                      @click="(setImageIndex(6))">6</div>
+
+
+
+               <div v-if="succeedStatus == 0"class="button is-danger" style="margin-bottom: 10px" @click="checkGuess()">Skip&gt;&gt;</div>
+               <div v-if="tryNum<6 && succeedStatus == 0" style="margin-bottom: 20px;"> {{7 - tryNum}} guesses  remaining</div>
+               <div v-if="tryNum == 6" style="margin-bottom: 20px;"> {{7 - tryNum}} guess remaining</div>
+
+               <div v-if="tryNum>6 && succeedStatus == -1">
+                    <div class = "game-over" stlye="color:red" >Game Over</div>
+                    <div>The correct answer was </div><div style="color:green; font-size:20px;">{{current_quiz[0].answer}} </div>
+               </div>
+               <div v-if="succeedStatus == 1"> 
+                    <div class="game-over" style = "color:green">Congratulations, You Won! </div>
+                    <div>The correct answer was </div><div style="color:green; font-size:20px;">{{current_quiz[0].answer}} </div>
+               </div>
+               <div v-if="succeedStatus == 0">
+                    <div class="columns">
+                         <div class="column is-4"></div>
+                         <div class="column is-one-sixth">
+                              <input class="input" type="text" list="answer-options" v-model="current_guess" placeholder="Any Good Guesses?" @keydown.enter="checkGuess()"/>
+
+                              <datalist id="answer-options">
+                                   <option v-for="option in filteredAnswerOptions" :value="option">{{option}}</option>
+                              </datalist>
+                         </div>
+                         <div class="column is-1">
+                         <button class="button is-link" @click="checkGuess()">Guess!</button>
+                         </div>
+                         <div class="column is-two-sevenths"></div>
+                    </div>
+               </div>
+               <div v-if="succeedStatus != 5">
+                    <br> 
+                    <div class="buttons centered" style="margin:0 auto;display:block;">
+                         <button class="button" :class="{'is-primary': game_upvote_status == 1}" @click="game_upvote_process(1)">
+                              <span class="icon">
+                                   <i class="fas fa-thumbs-up"></i>
+                              </span>
+                         </button>
+                         <button class="button" :class="{'is-danger': game_upvote_status == -1}"  @click="game_upvote_process(-1)">
+                              <span class="icon">
+                                   <i class="fas fa-thumbs-down"></i>
+                              </span>
+                         </button>
+                    </div>
+               </div>
+
+               <br>
+               <div v-if="succeedStatus != 5" class = "columns">
+                    <div class="column is-3"></div>
+                    <div class="column is-6">
+               <div class="field">
+                    <textarea class="textarea" v-model="cbar" placeholder="Add a comment..." rows="6" cols="10"></textarea>
+               </div>
+               <div class="field">
+                    <div class="control"><button class="button is-link" @click="save_comment()">Comment</button></div>
+               </div>
+              
+
+               <div v-for="c in comments">
+                         <div class="box" style="margin-top: 10px">
+                    <nav class="level is-mobile">
+                    <div class="level-left">
+                         <a class="level-item" aria-label="reply">
+                         <span class="icon is-small">
+                              <i class="fa fa-user"></i>
+                         </span>
+                         <span class="ml-2">{{c.author}}</span>
+                         </a>
+                    </div>
+                    <div class="level-right">
+                         <span class="level-item">
+                         {{c.utime}}
+                         </span>
+                         <a class="level-item" v-if="c.ownerStatus == true" @click="delete_post(c._idx)" aria-label="delete">
+                         <span class="icon is-small">
+                              <i class="fa fa-trash-alt" aria-hidden="true" ></i>
+                         </span>
+                         </a>
+                    </div>
+                              </nav>
+                    <div class="content" style="text-align: left;">
+                    {{c.postBody}}
+                    </div>
+                    <nav class="level is-mobile">
+                    <div class="level-left">
+                         
+                         <a class="level-item" @click="upvote_process(c._idx, 1)" aria-label="reply">
+                         <span class="icon is-small ">
+                              <i class="fa fa-thumbs-up" aria-hidden="true" ></i>
+                         </span>
+                         <span class="ml-1">{{c.likeRatio}}</span>
+                         </a>
+                         <a class="level-item" @click="upvote_process(c._idx, -1)" aria-label="reply">
+                         <span class="icon is-small">
+                              <i class="fa fa-thumbs-down" aria-hidden="true" ></i>
+                         </span>
+                         </a>
+                         <a class="level-item" @click="reply_button_function(c._idx)" aria-label="reply" style="margin-left: 15px;">
+                         <span class="icon is-small">
+                              <i class="fa fa-reply" aria-hidden="true" ></i>
+                         </span>
+                         </a>
+                    </div>
+                    </nav>
+                    </div>
+               </div>
+          </div>
+          
+
+
+     </center>
+
+
+
+</div>
+
+
+
+[[block page_scripts]]
+<script>
+    let get_quiz= "[[=XML(get_quiz)]]";
+    let get_comments_url = "[[=XML(get_comments_url)]]";
+    let comment_upvote_process_url = "[[=XML(comment_upvote_process_url)]]";
+    let comment_post_process_url = "[[=XML(comment_post_process_url)]]";
+    let delete_comment_url = "[[=XML(delete_comment_url)]]";
+    let game_upvote_process_url = "[[=XML(game_upvote_process_url)]]";
+    let get_answers_url = "[[=XML(get_answers_url)]]";
+    let game_state_update_url = "[[=XML(game_state_update_url)]]";
+    let initialData = {
+          quizID: "[[=quiz_id]]"
+    };
+</script>
+<script src="js/quiz_play.js"></script>
+[[end]]

@@ -1,0 +1,120 @@
+[[extend 'layout.html']]
+
+<style>
+[v-cloak] {
+     display: none;
+}
+</style>
+
+<!DOCTYPE html>
+
+
+<style>
+    .stat-sheet {
+        font-family: Arial, sans-serif;
+        width: 300px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .stat-value {
+        color: #888;
+    }
+    .title {
+    font-family: "Arial", sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+</style>
+
+<div class="section" id="vue-target" v-cloak>
+    <div>
+        
+    </div>
+    <div class = "columns">
+        <div class="column is-one-third" style="margin:25px">
+            <div class="columns">
+                <div class="column is-half">
+    <div class="stat-sheet">
+        <div class="stat">
+            <div class="stat-label">Username:</div>
+            <div class="stat-value">{{username}}</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Wins:</div>
+            <div class="stat-value">{{wins}}</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Losses:</div>
+            <div class="stat-value">{{losses}}</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Win Percentage:</div>
+            <div class="stat-value">{{(winPercentage).toFixed(2)}}%</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Avg Guesses To Win:</div>
+            <div class="stat-value">{{(avgGuesses).toFixed(2)}}</div>
+        </div>
+    </div>
+    </div>
+    <div class ="column is-half">
+        <div v-for="user in users" class="field has-addons">
+            <p class="control">
+                <div v-if="username != user.username">
+                    <div class="button" @click="stats_load(user.id)"> {{user.username}} </div>
+                </div>
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+    <div class = "column is-half" >
+        <h1 class="title">Past Games</h1>
+        <table class="table is-fullwidth is-striped">
+      <thead>
+        <th></th>
+        <th>Quiz Name</th>
+        <th>Current Guess</th>
+      </thead>
+      <tbody>
+        <tr v-for="quiz in qt">
+          <td>{{quiz._idx}}</td>
+          <td> {{quiz.quiz}}</td>
+          <td has-text-centered
+          :class="{'is-danger': quiz.status == -1, 'is-primary': quiz.status == 1,}"> {{quiz.text}} </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    </div>
+</div>
+
+
+
+
+
+[[block page_scripts]]
+<script>
+    var initialData = {
+        playerId: "[[=playerID]]",
+    };
+    let player_stats_load_url = "[[=XML(player_stats_load_url)]]";
+    let load_users_url= "[[=XML(load_users_url)]]";
+</script>
+<script src="js/stat_display.js"></script>
+[[end]]

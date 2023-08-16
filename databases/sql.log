@@ -1,0 +1,93 @@
+timestamp: 2023-06-14T03:27:44.284505
+CREATE TABLE "py4web_session"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "rkey" CHAR(512),
+    "rvalue" TEXT,
+    "expiration" INTEGER,
+    "created_on" TIMESTAMP,
+    "expires_on" TIMESTAMP
+);
+success!
+timestamp: 2023-06-14T03:27:44.295506
+CREATE TABLE "auth_user"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "username" CHAR(512) UNIQUE,
+    "email" CHAR(512) UNIQUE,
+    "password" CHAR(512),
+    "first_name" CHAR(512),
+    "last_name" CHAR(512),
+    "sso_id" CHAR(512),
+    "action_token" CHAR(512),
+    "last_password_change" TIMESTAMP,
+    "past_passwords_hash" TEXT
+);
+success!
+timestamp: 2023-06-14T03:27:44.302505
+CREATE TABLE "auth_user_tag_groups"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "tagpath" CHAR(512),
+    "record_id" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  
+);
+success!
+timestamp: 2023-06-14T03:27:44.313504
+CREATE TABLE "category"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "categoryname" CHAR(512),
+    "numpuzzles" INTEGER,
+    "numviews" CHAR(512)
+);
+success!
+timestamp: 2023-06-14T03:27:44.321505
+CREATE TABLE "quiz"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "gamename" CHAR(512),
+    "answer" CHAR(512),
+    "categoryname" CHAR(512),
+    "categoryid" INTEGER REFERENCES "category" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "image1" CHAR(512),
+    "image2" CHAR(512),
+    "image3" CHAR(512),
+    "image4" CHAR(512),
+    "image5" CHAR(512),
+    "image6" CHAR(512),
+    "creatorid" CHAR(512),
+    "upvotes" INTEGER,
+    "downvotes" INTEGER
+);
+success!
+timestamp: 2023-06-14T03:27:44.328506
+CREATE TABLE "game_comments"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "author" CHAR(512),
+    "gameid" INTEGER REFERENCES "quiz" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "likeratio" INTEGER,
+    "postbody" CHAR(512),
+    "time" CHAR(512)
+);
+success!
+timestamp: 2023-06-14T03:27:44.335506
+CREATE TABLE "upvote_data"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "user" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "post" INTEGER REFERENCES "game_comments" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "status" INTEGER,
+    "gameid" INTEGER REFERENCES "quiz" ("id") ON DELETE CASCADE ON UPDATE CASCADE  
+);
+success!
+timestamp: 2023-06-14T03:27:44.342505
+CREATE TABLE "game_upvotes"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "user" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "game" INTEGER REFERENCES "quiz" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "status" INTEGER
+);
+success!
+timestamp: 2023-06-14T03:27:44.349506
+CREATE TABLE "play_data"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "playerid" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "status" CHAR(512),
+    "guesses" INTEGER,
+    "quiz" INTEGER REFERENCES "quiz" ("id") ON DELETE CASCADE ON UPDATE CASCADE  
+);
+success!
